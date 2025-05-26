@@ -126,3 +126,11 @@ def connect_drone_for_mission_control():
     local_ip = get_local_ip()
     connection_string = f'{local_ip}:14551'  # Different port to avoid conflicts
     return connect_drone(connection_string)
+
+
+    aadish@raspi:~ $ ./start_sitl_network.sh
+Starting SITL on Raspberry Pi
+Raspberry Pi IP: 
+Windows PC IP: 192.168.68.108
+python3: can't open file '/home/aadish/drone-mission/ardupilot/ArduCopter/sim_vehicle.py': [Errno 2] No such file or directory
+
