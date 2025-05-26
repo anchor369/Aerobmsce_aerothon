@@ -50,3 +50,33 @@ Traceback (most recent call last):
   File "/usr/lib/python3.11/subprocess.py", line 1901, in _execute_child
     raise child_exception_type(errno_num, err_msg, err_filename)
 OSError: [Errno 8] Exec format error: '/home/aadish/.dronekit/sitl/copter-3.3/apm'
+
+
+cat > ~/start_sitl_network.sh << 'EOF'
+#!/bin/bash
+
+# Replace with your Windows PC IP
+WINDOWS_PC_IP="192.168.1.100"  # Change this to your actual Windows IP
+RASPI_IP=$(hostname -I | awk '{print $1}')
+
+echo "🚁 Starting SITL on Raspberry Pi"
+echo "📡 Raspberry Pi IP: $RASPI_IP"
+echo "💻 Windows PC IP: $WINDOWS_PC_IP"
+
+# Kill existing processes
+pkill -f sitl
+pkill -f sim_vehicle
+sleep 2
+
+# Start SITL with multiple outputs
+cd ~/ardupilot/ArduCopter
+python3 sim_vehicle.py \
+    --aircraft test \
+    --console \
+    --out udp:127.0.0.1:14550 \
+    --out udp:$WINDOWS_PC_IP:14550 \
+    --home=12.9716,77.5946,15,90
+
+EOF
+
+chmod +x ~/start_sitl_network.sh
