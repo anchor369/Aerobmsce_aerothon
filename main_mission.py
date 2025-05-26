@@ -9,8 +9,11 @@ import time
 vehicle = connect_drone()
 arm_and_takeoff(vehicle, 15)
 
+# 🎯 Set fixed disaster location (within your geofence)
+disaster_location = (12.97129, 77.59487)  # Change to actual simulated point
+
 current = vehicle.location.global_relative_frame
-disaster = spiral_search(vehicle, current.lat, current.lon)
+disaster = spiral_search(vehicle, current.lat, current.lon, disaster_location)
 
 if disaster:
     lat, lon = disaster
