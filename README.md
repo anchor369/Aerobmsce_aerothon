@@ -80,3 +80,49 @@ python3 sim_vehicle.py \
 EOF
 
 chmod +x ~/start_sitl_network.sh
+
+
+from dronekit import connect
+import time
+import socket
+
+def get_local_ip():
+    """Get the local IP address of Raspberry Pi"""
+    try:
+        # Connect to a remote server to determine local IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except:
+        return "127.0.0.1"
+
+def connect_drone(connection_string=None):
+    if connection_string is None:
+        connection_string = '127.0.0.1:14550'  # Local connection on Raspberry Pi
+    
+    print(f"🔗 Connecting to vehicle on {connection_string}...")
+    
+    for attempt in range(5):
+        try:
+            vehicle = connect(connection_string, wait_ready=True, timeout=30)
+            print("✅ Connected successfully!")
+            print(f"📊 Vehicle mode: {vehicle.mode}")
+            print(f"🔋 Battery: {vehicle.battery}")
+            print(f"📍 Location: {vehicle.location.global_frame}")
+            return vehicle
+        except Exception as e:
+            print(f"❌ Connection attempt {attempt + 1} failed: {e}")
+            if attempt < 4:
+                print("⏳ Retrying in 5 seconds...")
+                time.sleep(5)
+            else:
+                print("💡 Make sure SITL is running: ./start_sitl_network.sh")
+                raise
+
+def connect_drone_for_mission_control():
+    """Alternative connection for when Mission Control is primary"""
+    local_ip = get_local_ip()
+    connection_string = f'{local_ip}:14551'  # Different port to avoid conflicts
+    return connect_drone(connection_string)
