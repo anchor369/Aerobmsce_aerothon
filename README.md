@@ -27,3 +27,5 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328
 echo "deb https://download.mono-project.com/repo/debian stable-raspbian$(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mono-official.list
 
 deb https://download.mono-project.com/repo/debian stable-raspbianbookworm main
+
+dronekit-sitl copter --home=12.9716,77.5946,15,90 --model quad --out=udp:<your-windows-ip>:14550
