@@ -10,30 +10,31 @@ def hover_and_confirm_disaster(vehicle, lat, lon):
     print("👁 Hovering to confirm disaster...")
     vehicle.simple_goto(LocationGlobalRelative(lat, lon, 15))
     time.sleep(3)
-    # Add future camera confirmation here
     print("✅ Confirmed: Actual disaster detected.")
     return True
 
-# Connect and takeoff
+# Step 1: Connect to vehicle
 vehicle = connect_drone()
+
+# Step 2: Take off
 arm_and_takeoff(vehicle, 15)
 
-# Geofence center
+# Step 3: Determine geofence center
 current = vehicle.location.global_relative_frame
 center_lat = current.lat
 center_lon = current.lon
 
-# Set disaster location slightly inside geofence (mocked)
-disaster_location = (center_lat + 0.00025, center_lon + 0.00025)
+# Step 4: Place disaster somewhere inside geofence (mock)
+disaster_location = (center_lat + 0.00025, center_lon + 0.0002)  # ~30m offset
 
-# Step 1: Move to spiral start point (e.g., top-left corner of geofence)
-start_lat = center_lat + 0.0005
-start_lon = center_lon - 0.0005
-print("🛫 Flying to entry point at geofence edge...")
+# Step 5: Fly to outer edge of geofence
+start_lat = center_lat + (50 / 111111)  # ~50m north
+start_lon = center_lon
+print("🛫 Flying to outer edge of geofence...")
 vehicle.simple_goto(LocationGlobalRelative(start_lat, start_lon, 15))
 time.sleep(10)
 
-# Step 2: Begin spiral search (center is still center_lat/lon)
+# Step 6: Begin inward spiral search
 disaster = spiral_search(
     vehicle=vehicle,
     center_lat=center_lat,
@@ -43,7 +44,7 @@ disaster = spiral_search(
     max_geofence_radius=50  # meters
 )
 
-# Step 3: Engage if disaster found
+# Step 7: Handle detection
 if disaster:
     lat, lon = disaster
     if hover_and_confirm_disaster(vehicle, lat, lon):
@@ -57,6 +58,6 @@ if disaster:
         vehicle.simple_goto(LocationGlobalRelative(lat, lon, 15))
         time.sleep(5)
 
-# Step 4: Return home
+# Step 8: Return home
 return_to_home(vehicle)
 vehicle.close()
