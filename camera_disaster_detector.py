@@ -20,7 +20,7 @@ def detect_disaster_and_direction(cap, target_classes=['road_incident', 'traffic
     detections = results[0].boxes.data
 
     frame_width = frame.shape[1]
-
+    cv2.imshow("Detection", frame)
     for box in detections:
         x1, y1, x2, y2, conf, cls = box.tolist()
         label = model.names[int(cls)]
