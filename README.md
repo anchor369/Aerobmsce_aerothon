@@ -1,7 +1,3 @@
-Here’s a detailed, professional-style `README.md` tailored for your drone disaster detection project:
-
----
-
 ## 🚁 Autonomous Drone Disaster Detection System
 
 This project presents a fully autonomous drone system powered by Raspberry Pi 5, Pixhawk (ArduPilot), and real-time AI-powered disaster detection using YOLOv8. The drone is capable of:
@@ -138,5 +134,4 @@ This system allows a drone to:
 * Operate autonomously with zero ground intervention
 * Detect and respond to real-world disaster scenarios
 * Adapt its mission flow based on onboard visual inference
-
 ---
