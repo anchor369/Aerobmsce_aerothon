@@ -4,7 +4,7 @@ import cv2
 from ultralytics import YOLO
 
 # Load model
-model = YOLO("yolo_recognize/yolov8n.pt")
+model = YOLO("yolo_recognize/best.pt")
 model.conf = 0.5
 
 picam2 = None  # Global for reuse
