@@ -68,4 +68,5 @@ return_to_home(vehicle)
 # Step 9: Cleanup
 camera.release()
 vehicle.close()
+cv2.destroyAllWindows()
 print("✅ Mission completed and camera released.")
