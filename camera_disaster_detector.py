@@ -27,6 +27,7 @@ def detect_disaster_and_direction(cap, target_classes=['road_incident', 'traffic
         label = model.names[int(cls)]
         if label in target_classes:
             cx = (x1 + x2) / 2
+            print(f"📦 BBox detected at cx: {cx}")
 
             if cx < frame_width * 0.33:
                 return True, "left"
