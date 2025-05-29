@@ -18,7 +18,7 @@ def init_camera():
     print("📷 AI Pi Camera initialized.")
     return picam2
 
-def detect_disaster_and_direction(picam2, target_classes=['road_incident', 'traffic_incident']):
+def detect_disaster_and_direction(picam2, target_classes=['road_incident', 'traffic_accident']):
     frame = picam2.capture_array()
 
     results = model(frame)
@@ -33,14 +33,18 @@ def detect_disaster_and_direction(picam2, target_classes=['road_incident', 'traf
     for box in detections:
         x1, y1, x2, y2, conf, cls = box.tolist()
         label = model.names[int(cls)]
-        if label in target_classes:
+        print(f"🔍 Detected label: {label}, Confidence: {conf:.2f}")
+        
+        if label in target_classes and conf >= 0.6:
             cx = (x1 + x2) / 2
             print(f"📦 BBox detected at cx: {cx}")
+    
             if cx < frame_width * 0.33:
                 return True, "left"
             elif cx > frame_width * 0.66:
                 return True, "right"
             else:
                 return True, "center"
+
 
     return False, None
