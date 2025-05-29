@@ -74,11 +74,17 @@ def spiral_search(vehicle, center_lat, center_lon, detection_radius, max_geofenc
         detected, direction = detect_disaster_and_direction(camera)
         if detected:
             print(f"🚨 Disaster detected in direction: {direction.upper()}")
-            target_location = get_offset_location(vehicle, direction, 10)  # move 10m in that direction
+        
+            # Ensure we're in GUIDED mode
+            from dronekit import VehicleMode
+            vehicle.mode = VehicleMode("GUIDED")
+            time.sleep(1)
+        
+            target_location = get_offset_location(vehicle, direction, 10)
+            print(f"🚁 Redirecting to: {target_location.lat:.6f}, {target_location.lon:.6f}")
             vehicle.simple_goto(target_location)
             time.sleep(4)
-
-            # Confirm actual disaster location via GPS
+        
             current = vehicle.location.global_relative_frame
             disaster_found = (current.lat, current.lon)
             break
