@@ -7,7 +7,6 @@ from camera.vision import (
     init_camera,
     capture_frame,
     detect_objects,
-    detect_disaster_and_direction,
     object_counts,
 )
 from payload.drop_control import drop_payload
@@ -20,6 +19,9 @@ from config import (
     CAMERA_VFOV,
 )
 from dronekit import VehicleMode
+
+# Hardcoded disaster coordinates (inside geofence)
+disaster_location = (12.97185, 77.59475)  # You can adjust this
 
 # Step 1: Connect to drone
 vehicle = connect_drone()
@@ -39,35 +41,23 @@ entry_point = waypoints[0]
 print(f"Navigating to geofence entry point at {entry_point}")
 goto_point(vehicle, entry_point[0], entry_point[1], MISSION_ALTITUDE)
 
-# Step 6: Perform object detection + disaster logging
-disaster_location = None
-
+# Step 6: Perform full object detection sweep
 for lat, lon in waypoints:
     goto_point(vehicle, lat, lon, MISSION_ALTITUDE)
     frame = capture_frame()
-
     detect_objects(frame)
 
-    if not disaster_location:
-        found, direction = detect_disaster_and_direction(frame)
-        if found:
-            print(f"[SIM] Disaster detected in {direction} direction at ({lat:.6f}, {lon:.6f})")
-            disaster_location = (lat, lon)
+print("✅ Grid scan complete. Proceeding to hardcoded disaster location...")
 
-print("✅ Grid scan complete. Proceeding to payload delivery if needed...")
-
-# Step 7: Go to disaster location and drop payload
-if disaster_location:
-    print(f"Navigating to stored disaster location: {disaster_location}")
-    drop_payload(vehicle, disaster_location[0], disaster_location[1])
+# Step 7: Navigate to hardcoded disaster location and drop payload
+drop_payload(vehicle, disaster_location[0], disaster_location[1])
 
 # Step 8: Return to launch
 print("Returning to launch...")
 vehicle.mode = VehicleMode("RTL")
 
-# Step 9: Save log
+# Step 9: Save result log
 log_mission_result(object_counts, disaster_location)
+
 vehicle.close()
-
 print("✅ Mission complete.")
-
