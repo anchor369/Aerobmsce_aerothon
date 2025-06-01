@@ -25,7 +25,11 @@ disaster_location = (12.97185, 77.59475)  # You can adjust this
 
 # Step 1: Connect to drone
 vehicle = connect_drone()
-
+# ✅ Get real-time GPS coordinates from SITL
+GEOFENCE_CENTER = (
+    vehicle.location.global_frame.lat,
+    vehicle.location.global_frame.lon
+)
 # Step 2: Initialize camera
 init_camera()
 
