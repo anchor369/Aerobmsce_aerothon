@@ -1,5 +1,3 @@
-# drone/flight_control.py
-
 import time
 from dronekit import VehicleMode, LocationGlobalRelative
 
@@ -12,22 +10,38 @@ def takeoff_to_altitude(vehicle, target_altitude):
     vehicle.armed = True
 
     while not vehicle.armed:
-        print("⏳ Waiting for arming...")
+        print("⏳ Waiting for drone to arm...")
         time.sleep(1)
 
     vehicle.simple_takeoff(target_altitude)
 
-    while vehicle.location.global_relative_frame.alt < target_altitude * 0.95:
-        print(f"🔼 Altitude: {vehicle.location.global_relative_frame.alt:.2f} m")
+    while True:
+        current_alt = vehicle.location.global_relative_frame.alt
+        print(f"🔼 Current Altitude: {current_alt:.2f} m")
+        if current_alt >= target_altitude * 0.95:
+            print("✅ Reached target altitude.")
+            break
         time.sleep(1)
-
-    print("✅ Target altitude reached.")
 
 def goto_point(vehicle, lat, lon, alt):
     """
     Commands the drone to fly to a specific GPS coordinate at given altitude.
+    Waits until the drone is close enough to the target.
     """
-    print(f"➡️ Navigating to waypoint: ({lat:.6f}, {lon:.6f}, {alt}m)")
-    location = LocationGlobalRelative(lat, lon, alt)
-    vehicle.simple_goto(location)
-    time.sleep(4)  # Adjust based on distance or use distance check
+    print(f"➡️ Navigating to waypoint: ({lat:.6f}, {lon:.6f}, {alt:.2f} m)")
+    target_location = LocationGlobalRelative(lat, lon, alt)
+    vehicle.simple_goto(target_location)
+
+    while True:
+        current = vehicle.location.global_relative_frame
+        dist_lat = abs(current.lat - lat)
+        dist_lon = abs(current.lon - lon)
+        dist_alt = abs(current.alt - alt)
+
+        print(f"📍 Current Position: ({current.lat:.6f}, {current.lon:.6f}, {current.alt:.2f} m)")
+
+        if dist_lat < 0.00005 and dist_lon < 0.00005 and dist_alt < 1.0:
+            print("✅ Reached waypoint.")
+            break
+
+        time.sleep(1)
