@@ -27,14 +27,14 @@ def capture_frame():
     return picam2.capture_array()
 
 def detect_objects(frame):
-    """
-    Simulated object detection. Randomly adds object types to object_counts.
-    """
     simulated_objects = ['cone', 'ball', 'cylinder', 'cube']
+    current_detection = {}
     for _ in range(random.randint(2, 4)):
         label = random.choice(simulated_objects)
         object_counts[label] = object_counts.get(label, 0) + 1
-    print(f"[SIM] Detected objects: {object_counts}")
+        current_detection[label] = current_detection.get(label, 0) + 1
+    print(f"[SIM] Detected objects at this waypoint: {current_detection}")
+
 
 def detect_disaster_and_direction(frame, target_classes=DISASTER_CLASSES):
     """
