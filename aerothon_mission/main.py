@@ -22,6 +22,10 @@ import random
 # Step 1: Connect to vehicle
 vehicle = connect_drone()
 
+vehicle.parameters['ARMING_CHECK'] = 0
+time.sleep(1)
+
+
 # Step 2: Initialize camera
 init_camera()
 
